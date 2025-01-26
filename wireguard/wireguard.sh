@@ -12,7 +12,7 @@
 
 
 # Define variables
-WIREGUARD_DIR="/var/lib/docker/volume/wireguard"
+WIREGUARD_DIR="/var/lib/docker/volumes/wireguard"
 INFO_PRIVATE="$WIREGUARD_DIR/info.private"
 # info.private should contain:
 # private_key=...
@@ -159,4 +159,3 @@ docker run -d \
     -v $WIREGUARD_DIR:/etc/wireguard \
     --restart unless-stopped \
     $DOCKER_IMAGE
-    
