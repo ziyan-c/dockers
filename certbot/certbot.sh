@@ -34,7 +34,7 @@ done
 
 # 1
 # Build dodkcer image 
-docker build -t certbot .
+docker build -t ziyan1c/certbot .
 
 
 # 2
@@ -42,7 +42,7 @@ docker build -t certbot .
 docker run --rm \
     -v certbot:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
-    certbot certonly \
+    ziyan1c/certbot certonly \
     --dns-cloudflare \
     --dns-cloudflare-credentials /etc/letsencrypt/info.private \
     $DOMAIN_ARGS \
@@ -54,7 +54,7 @@ docker run --rm \
 JOB="/usr/bin/docker run --rm \
     -v certbot:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
-    certbot renew \
+    ziyan1c/certbot renew \
     --dns-cloudflare \
     --dns-cloudflare-credentials /etc/letsencrypt/info.private"
 CRON_JOB="0 8 * * *    $JOB"
