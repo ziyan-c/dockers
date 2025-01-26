@@ -73,7 +73,7 @@ fi
 
 # 2 
 # Create WireGuard configuration file
-cat > $CONFIG_FILE <<EOF
+cat > "$CONFIG_FILE" <<EOF
 [Interface]
 PrivateKey = $PRIVATE_KEY
 Address = $ADDRESS_IPV4, $ADDRESS_IPV6
@@ -119,18 +119,18 @@ PostDown = iptables -D INPUT -p udp --dport $LISTEN_PORT -j ACCEPT && \
 # Client configurations
 # PC configuration
 [Peer]
-PublicKey = \$pc_public_key
-AllowedIPs = \$pc_allowed_ips
+PublicKey = $pc_public_key
+AllowedIPs = $pc_allowed_ips
 
 # Phone configuration
 [Peer]
-PublicKey = \$phone_public_key
-AllowedIPs = \$phone_allowed_ips
+PublicKey = $phone_public_key
+AllowedIPs = $phone_allowed_ips
 
 # Tablet configuration
 [Peer]
-PublicKey = \$tablet_public_key
-AllowedIPs = \$tablet_allowed_ips
+PublicKey = $tablet_public_key
+AllowedIPs = $tablet_allowed_ips
 EOF
 
 chmod 600 "$CONFIG_FILE"
@@ -156,7 +156,7 @@ docker run -d \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
     --sysctl net.ipv4.ip_forward=1 \
     --sysctl net.ipv6.conf.all.forwarding=1 \
-    -v $WIREGUARD_DIR:/etc/wireguard \
-    -v $CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf \
+    -v "$WIREGUARD_DIR:/etc/wireguard" \
+    -v "$CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf" \
     --restart unless-stopped \
-    $DOCKER_IMAGE
+    "$DOCKER_IMAGE"
