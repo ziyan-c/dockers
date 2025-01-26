@@ -152,8 +152,8 @@ while read -r line; do
     # Add the client configuration
     echo "# $CLIENT" >> $CONFIG_FILE
     echo "[Peer]" >> $CONFIG_FILE
-    echo "PublicKey = $PUBLIC_KEY" >> $CONFIG_FILE
-    echo "AllowedIPs = $ALLOWED_IPS" >> $CONFIG_FILE
+    echo "PublicKey = '$PUBLIC_KEY'" >> $CONFIG_FILE
+    echo "AllowedIPs = '$ALLOWED_IPS'" >> $CONFIG_FILE
     echo >> $CONFIG_FILE
   fi
 done < "$INFO_PRIVATE"
