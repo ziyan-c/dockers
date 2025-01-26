@@ -150,7 +150,7 @@ docker build -t ziyan1c/wireguard .
 DOCKER_IMAGE="ziyan1c/wireguard"
 CONTAINER_NAME="wireguard"
 
-docker run -d \
+docker run -d -it \
     --name $CONTAINER_NAME \
     --cap-add=NET_ADMIN \
     --cap-add=SYS_MODULE \
@@ -160,4 +160,5 @@ docker run -d \
     -v "$WIREGUARD_DIR:/etc/wireguard" \
     -v "$CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf" \
     --restart unless-stopped \
+    -p "$LISTEN_PORT":"$LISTEN_PORT"/udp \
     "$DOCKER_IMAGE"
