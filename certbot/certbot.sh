@@ -41,7 +41,7 @@ docker build -t certbot .
 # Run docker certbot 
 docker run --rm \
     -v certbot:/etc/letsencrypt \
-    -v certbot/info.private:/etc/letsencrypt/info.private \
+    -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
     certbot certonly \
     --dns-cloudflare \
     --dns-cloudflare-credentials /etc/letsencrypt/info.private \
@@ -53,7 +53,7 @@ docker run --rm \
 # Create a cron job to renew certificate daily at 8 AM
 CRON_JOB="0 8 * * *   docker run --rm \
     -v certbot:/etc/letsencrypt \
-    -v certbot/info.private:/etc/letsencrypt/info.private \
+    -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
     certbot renew \
     --dns-cloudflare \
     --dns-cloudflare-credentials /etc/letsencrypt/info.private "
