@@ -36,6 +36,7 @@ if [ -f "$INFO_PRIVATE" ]; then
     . "$INFO_PRIVATE" # Source the private key and client details
 else
     echo "Creating new WireGuard configuration..."
+    docker volume create wireguard 
     PRIVATE_KEY=$(wg genkey)
     PUBLIC_KEY=$(echo "$PRIVATE_KEY" | wg pubkey)
 
