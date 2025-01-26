@@ -7,6 +7,8 @@
 # else 
 #   create info for PC, Phone and tablet itself 
 # 2. Create wireguard configuration file 
+# 3. Build docker ziyan1c/wireguard 
+# 4. Run docker wireguard 
 
 
 # Define variables
@@ -135,3 +137,26 @@ chmod 600 "$CONFIG_FILE"
 
 # Display the status
 echo "WireGuard configuration completed."
+
+
+# 3
+# build docker ziyan1c/wireguard 
+docker build -t ziyan1c/wireguard .
+
+
+# 4.
+# Run docker wireguard 
+DOCKER_IMAGE="ziyan1c/wireguard"
+CONTAINER_NAME="wireguard"
+
+docker run -d \
+    --name $CONTAINER_NAME \
+    --cap-add=NET_ADMIN \
+    --cap-add=SYS_MODULE \
+    --sysctl net.ipv4.conf.all.src_valid_mark=1 \
+    --sysctl net.ipv4.ip_forward=1 \
+    --sysctl net.ipv6.conf.all.forwarding=1 \
+    -v $WIREGUARD_DIR:/etc/wireguard \
+    --restart unless-stopped \
+    $DOCKER_IMAGE
+    
