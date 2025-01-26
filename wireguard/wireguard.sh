@@ -13,7 +13,7 @@
 
 # Define variables
 WIREGUARD_DIR="/var/lib/docker/volumes/wireguard"
-INFO_PRIVATE="$WIREGUARD_DIR/INFO_PRIVATE"
+INFO_PRIVATE="$WIREGUARD_DIR/info.private"
 # INFO_PRIVATE should contain:
 # private_key=...
 # pc_public_key=...
