@@ -43,7 +43,7 @@ docker run --rm \
     -v certbot:/etc/letsencrypt \
     certbot certonly \
     --dns-cloudflare \
-    --dns-cloudflare-credentials /etc/lets/encrypt/info.private \
+    --dns-cloudflare-credentials /etc/letsencrypt/info.private \
     $DOMAIN_ARGS \
     --email $EMAIL \
     --non-interactive --agree-tos 
