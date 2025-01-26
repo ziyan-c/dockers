@@ -76,7 +76,7 @@ fi
 # Create WireGuard configuration file
 cat > "$CONFIG_FILE" <<EOF
 [Interface]
-PrivateKey = $PRIVATE_KEY
+PrivateKey = $private_key
 Address = $ADDRESS_IPV4, $ADDRESS_IPV6
 ListenPort = $LISTEN_PORT
 
