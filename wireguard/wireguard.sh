@@ -156,6 +156,7 @@ docker run -d \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
     --sysctl net.ipv4.ip_forward=1 \
     --sysctl net.ipv6.conf.all.forwarding=1 \
+    -v $WIREGUARD_DIR:/etc/wireguard \
     -v $CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf \
     --restart unless-stopped \
     $DOCKER_IMAGE
