@@ -51,10 +51,11 @@ docker run --rm \
 
 # 3
 # Create a cron job to renew certificate daily at 8 AM
-CRON_JOB="0 8 * * *   docker run --rm \
+JOB="/usr/bin/docker run --rm \
     -v certbot:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
     certbot renew \
     --dns-cloudflare \
-    --dns-cloudflare-credentials /etc/letsencrypt/info.private "
-(crontab -l 2>/dev/null; echo $CRON_JOB) | crontab -
+    --dns-cloudflare-credentials /etc/letsencrypt/info.private"
+CRON_JOB="0 8 * * *    $JOB"
+(crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
