@@ -144,10 +144,10 @@ echo "# Client configurations" >> $CONFIG_FILE
 # Process each client (phone, tablet, pc, etc.)
 while read -r line; do
   if [[ $line == *_private_key=* ]]; then
-    CLIENT=$(echo "$line" | awk -F_ '{print $1}')
-    PRIVATE_KEY=$(echo "$line" | awk -F= '{print $2}')
-    PUBLIC_KEY=$(awk -F= -v key="${CLIENT}_public_key=" '$0 ~ key {print $2}' "$INPUT_FILE")
-    ALLOWED_IPS=$(awk -F= -v key="${CLIENT}_allowed_ips=" '$0 ~ key {print $2}' "$INPUT_FILE")
+    CLIENT=$(echo "$line" | cut -d'_' -f1)
+    PRIVATE_KEY=$(echo "$line" | cut -d'=' -f2-)
+    PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$INPUT_FILE" | cut -d'=' -f2-)
+    ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$INPUT_FILE" | cut -d'=' -f2)
     
     # Add the client configuration
     echo "# $CLIENT" >> $CONFIG_FILE
