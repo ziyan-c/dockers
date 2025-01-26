@@ -5,7 +5,7 @@ RUN apk update
 
 # Install dependencies 
 RUN apk add --no-cache bash 
-RUN apk add --no-cache certbot cerbot-dns-cloudflare 
+RUN apk add --no-cache certbot certbot-dns-cloudflare 
 
 WORKDIR /etc/certbot 
 
