@@ -159,6 +159,6 @@ docker run -d -it \
     --sysctl net.ipv6.conf.all.forwarding=1 \
     -v "$WIREGUARD_DIR:/etc/wireguard" \
     -v "$CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf" \
-    --restart always \
     -p "$LISTEN_PORT":"$LISTEN_PORT"/udp \
+    --restart always \
     "$DOCKER_IMAGE"
