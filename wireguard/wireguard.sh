@@ -146,8 +146,8 @@ while read -r line; do
   if [[ $line == *_private_key=* ]]; then
     CLIENT=$(echo "$line" | cut -d'_' -f1)
     PRIVATE_KEY=$(echo "$line" | cut -d'=' -f2)
-    PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$(INFO_PRIVATE)" | cut -d'=' -f2)
-    ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$(INFO_PRIVATE)" | cut -d'=' -f2)
+    PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$INFO_PRIVATE" | cut -d'=' -f2)
+    ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$INFO_PRIVATE" | cut -d'=' -f2)
     
     # Add the client configuration
     echo "# $CLIENT" >> $CONFIG_FILE
@@ -156,7 +156,7 @@ while read -r line; do
     echo "AllowedIPs = $ALLOWED_IPS" >> $CONFIG_FILE
     echo >> $CONFIG_FILE
   fi
-done < "$(INFO_PRIVATE)"
+done < "$INFO_PRIVATE"
 
 
 
