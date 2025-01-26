@@ -14,4 +14,5 @@ WORKDIR /etc/wireguard
 
 # Entrypoint for wireguard  
 ENTRYPOINT ["wg-quick"]
+CMD ["up", "wg0"]
 
