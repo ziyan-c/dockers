@@ -10,8 +10,9 @@ if exists
   use the info 
 else 
   create info for PC, Phone and tablet itself 
-
 2. Create wireguard configuration file 
+3. Build docker ziyan1c/wireguard 
+4. Run docker wireguard 
 
 
 ## info.private 

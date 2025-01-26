@@ -117,22 +117,50 @@ PostDown = iptables -D INPUT -p udp --dport $LISTEN_PORT -j ACCEPT && \
     iptables -t nat -D POSTROUTING -s $ADDRESS_IPV4 -o $DOCKER_INTERFACE -j MASQUERADE && \
     [ -e /proc/net/if_inet6 ] && ip6tables -t nat -D POSTROUTING -s $ADDRESS_IPV6 -o $DOCKER_INTERFACE -j MASQUERADE
 
-# Client configurations
-# PC configuration
-[Peer]
-PublicKey = $pc_public_key
-AllowedIPs = $pc_allowed_ips
-
-# Phone configuration
-[Peer]
-PublicKey = $phone_public_key
-AllowedIPs = $phone_allowed_ips
-
-# Tablet configuration
-[Peer]
-PublicKey = $tablet_public_key
-AllowedIPs = $tablet_allowed_ips
 EOF
+
+
+# # Client configurations
+# # PC configuration
+# [Peer]
+# PublicKey = $pc_public_key
+# AllowedIPs = $pc_allowed_ips
+
+# # Phone configuration
+# [Peer]
+# PublicKey = $phone_public_key
+# AllowedIPs = $phone_allowed_ips
+
+# # Tablet configuration
+# [Peer]
+# PublicKey = $tablet_public_key
+# AllowedIPs = $tablet_allowed_ips
+# EOF
+
+
+
+echo "# Client configurations" >> $CONFIG_FILE
+# Add client configurations 
+# Process each client (phone, tablet, pc, etc.)
+while read -r line; do
+  if [[ $line == *_private_key=* ]]; then
+    CLIENT=$(echo "$line" | cut -d'_' -f1)
+    PRIVATE_KEY=$(echo "$line" | cut -d'=' -f2)
+    PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$(INFO.PRIVATE)" | cut -d'=' -f2)
+    ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$(INFO.PRIVATE)" | cut -d'=' -f2)
+    
+    # Add the client configuration
+    echo "# $CLIENT" >> $CONFIG_FILE
+    echo "[Peer]" >> $CONFIG_FILE
+    echo "PublicKey = $PUBLIC_KEY" >> $CONFIG_FILE
+    echo "AllowedIPs = $ALLOWED_IPS" >> $CONFIG_FILE
+    echo >> $CONFIG_FILE
+  fi
+done < "$(INFO.PRIVATE)"
+
+
+
+
 
 chmod 600 "$CONFIG_FILE"
 
