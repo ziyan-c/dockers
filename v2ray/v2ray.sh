@@ -187,7 +187,7 @@ docker run -d -it \
     -v ${USERS_JSON_PATH}:/etc/v2ray/users.json \
     -v ${CONFIG_JSON_PATH}:/etc/v2ray/config.json \
     -v ${LOG_FILE_PATH}:/var/log/v2ray \
-    -p ${VMESS_PORT}:${VMESS_PORT} \  # vmess port
+    -p ${VMESS_PORT}:${VMESS_PORT} \  
     --restart always \
     --name v2ray \
     ziyan1c/v2ray 
