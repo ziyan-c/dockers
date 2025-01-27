@@ -35,9 +35,6 @@ ssl=on       # Enable SSL for secure connections
 ssl_cert=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/fullchain.pem 
 ssl_key=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/privkey.pem 
 
-# Socket
-socket=/var/run/mysqld/mysqld.sock
-
 EOF
 
     # Generate a random root password
