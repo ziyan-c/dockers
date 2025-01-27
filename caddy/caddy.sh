@@ -73,9 +73,9 @@ EOF
 docker build -t ziyan1c/caddy .
 
 docker run -d -it \
-    -v caddy/etc/caddy:/etc/caddy \
-    -v caddy/etc/ssl:/etc/ssl \
-    -v caddy/usr/share/caddy:/usr/share/caddy \
+    -v /var/lib/docker/volumes/caddy/etc/caddy:/etc/caddy \
+    -v /var/lib/docker/volumes/caddy/etc/ssl:/etc/ssl \
+    -v /var/lib/docker/volumes/caddy/usr/share/caddy:/usr/share/caddy \
     -p 80:80 -p 443:443 \
     --restart always \
     --name caddy \
