@@ -16,8 +16,8 @@ top_level_domain=example.com
 
 # Server-specific information
 server_domain=server.example.com
-server_cert=/etc/ssl/domain/a.pem
-server_key=/etc/ssl/domain/a.key
+server_cert=/etc/ssl/domain/cf.pem
+server_key=/etc/ssl/domain/cf.key
 
 # Reverse proxy configuration
 reverse_proxy_ip=
