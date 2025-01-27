@@ -11,4 +11,5 @@ WORKDIR /etc/caddy
 
 
 # Entrypoint for certbot 
-ENTRYPOINT ["caddy"]
+ENTRYPOINT ["bash", "-c"]
+CMD ["caddy start && sleep infinty"]
