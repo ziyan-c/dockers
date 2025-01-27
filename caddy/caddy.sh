@@ -44,7 +44,7 @@ if [[ ! -f /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile ]]; then
             output discard
         }
     }
-    EOF
+EOF
 
     # Add the server-specific Caddyfile configuration
     cat >> /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
