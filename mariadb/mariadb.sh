@@ -68,7 +68,7 @@ EOF
     echo "Granting all privileges to root@%..."
     docker exec mariadb-init mariadb -u root <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
-CREATE USER 'root'@'%' IDENTIFIED BY '$ROOT_PASSWORD';
+RENAME USER 'root'@'localhost' TO 'root'@'%';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
