@@ -72,6 +72,7 @@ RENAME USER 'root'@'localhost' TO 'root'@'%';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EOF
+    docker exec mariadb-init echo "yes" > /var/lib/mysql/a.yes
 
     echo "Root user privileges granted to root@%."
 
