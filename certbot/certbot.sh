@@ -40,7 +40,7 @@ docker build -t ziyan1c/certbot .
 # 2
 # Run docker certbot 
 docker run --rm \
-    -v certbot:/etc/letsencrypt \
+    -v /var/lib/docker/volumes/certbot/etc/letsencrypt:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
     ziyan1c/certbot certonly \
     --dns-cloudflare \
