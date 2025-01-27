@@ -91,84 +91,86 @@ cat <<EOF >> "$USERS_JSON_PATH"
 EOF
 
 # Generate config.json
-mkdir -p "$(dirname "$CONFIG_JSON_PATH")"
-cat <<EOF > "$CONFIG_JSON_PATH"
-{
-    "inbounds": [
-        {
-            "tag": "vmess",
-            "listen": "$VMESS_LISTEN",
-            "port": $VMESS_PORT,
-            "protocol": "vmess",
-            "settings": { },
-            "streamSettings": {
-                "network": "tcp"
-            }
-        },
-        {
-            "tag": "vless",
-            "listen": "$VLESS_LISTEN",
-            "port": $VLESS_PORT,
-            "protocol": "vless",
-            "settings": {
-                "decryption": "none"
+# Execute only when $CONFIG_JSON_PATH does not exist
+if [[ ! -f $CONFIG_JSON_PATH ]]; then 
+    mkdir -p "$(dirname "$CONFIG_JSON_PATH")"
+    cat <<EOF > "$CONFIG_JSON_PATH"
+    {
+        "inbounds": [
+            {
+                "tag": "vmess",
+                "listen": "$VMESS_LISTEN",
+                "port": $VMESS_PORT,
+                "protocol": "vmess",
+                "settings": { },
+                "streamSettings": {
+                    "network": "tcp"
+                }
             },
-            "streamSettings": {
-                "network": "ws",
-                "wsSettings": {
-                    "path": "/v2ray/"
+            {
+                "tag": "vless",
+                "listen": "$VLESS_LISTEN",
+                "port": $VLESS_PORT,
+                "protocol": "vless",
+                "settings": {
+                    "decryption": "none"
+                },
+                "streamSettings": {
+                    "network": "ws",
+                    "wsSettings": {
+                        "path": "/v2ray/"
+                    }
+                }
+            },
+            {
+                "tag": "api",
+                "listen": "$API_LISTEN",
+                "port": $API_PORT,
+                "protocol": "dokodemo-door",
+                "settings": {
+                    "address": "$API_LISTEN"
                 }
             }
-        },
-        {
-            "tag": "api",
-            "listen": "$API_LISTEN",
-            "port": $API_PORT,
-            "protocol": "dokodemo-door",
-            "settings": {
-                "address": "$API_LISTEN"
-            }
-        }
-    ],
-    "outbounds": [
-        {
-            "tag": "direct",
-            "protocol": "freedom"
-        }
-    ],
-    "log": {
-        "access": "/var/log/v2ray/access.log",
-        "error": "/var/log/v2ray/error.log",
-        "loglevel": "warning"
-    },
-    "stats": {},
-    "api": {
-        "tag": "api",
-        "services": [
-            "StatsService"
-        ]
-    },
-    "policy": {
-        "levels": {
-            "0": {
-                "statsUserUplink": true,
-                "statsUserDownlink": true
-            }
-        },
-        "system": {}
-    },
-    "routing": {
-        "rules": [
+        ],
+        "outbounds": [
             {
-                "inboundTag": [
-                    "api"
-                ],
-                "outboundTag": "api",
-                "type": "field"
+                "tag": "direct",
+                "protocol": "freedom"
             }
-        ]
+        ],
+        "log": {
+            "access": "/var/log/v2ray/access.log",
+            "error": "/var/log/v2ray/error.log",
+            "loglevel": "warning"
+        },
+        "stats": {},
+        "api": {
+            "tag": "api",
+            "services": [
+                "StatsService"
+            ]
+        },
+        "policy": {
+            "levels": {
+                "0": {
+                    "statsUserUplink": true,
+                    "statsUserDownlink": true
+                }
+            },
+            "system": {}
+        },
+        "routing": {
+            "rules": [
+                {
+                    "inboundTag": [
+                        "api"
+                    ],
+                    "outboundTag": "api",
+                    "type": "field"
+                }
+            ]
+        }
     }
-}
 EOF
 
 cat <<EOF
@@ -177,6 +179,7 @@ Configuration files have been written:
  - Config: $CONFIG_JSON_PATH
 EOF
 
+fi
 
 docker build -t ziyan1c/v2ray . 
 
