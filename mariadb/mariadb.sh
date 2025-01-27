@@ -1,7 +1,17 @@
 #!/bin/bash 
 
+# JOBS 
+
+
 # Path to the MariaDB data directory
 DATA_DIR="/var/lib/docker/volumes/mariadb/var/lib/mysql"
+INFO_PRIVATE="/var/lib/docker/volumes/mariadb/info.private"
+TOP_LEVEL_DOMAIN_NAME=$(grep '^top_level_domain_name=' "$INFO_PRIVATE" | cut -d'=' -f2-)
+
+if [[ ! -f $INFO_PRIVATE ]]; then 
+    echo "Error: info.private not provided"
+    exit 1
+fi 
 
 docker build -t ziyan1c/mariadb .
 
@@ -22,8 +32,8 @@ port=3306
 
 # Security 
 ssl=on       # Enable SSL for secure connections 
-ssl_cert=/etc/letsencrypt/live/fullchain.pem 
-ssl_key=/etc/letsencrypt/live/privkey.pem 
+ssl_cert=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/fullchain.pem 
+ssl_key=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/privkey.pem 
 
 EOF
 

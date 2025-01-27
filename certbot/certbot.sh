@@ -15,6 +15,7 @@ if [[ ! -f $INFO_FILE ]]; then
     echo "Error: info.private not found"
     exit 1
 fi 
+chmod 600 $INFO_FILE
 
 #CLOUDFLARE_API_TOKEN=$(grep 'dns_cloudflare_api_token' "$INFO_FILE" | cut -d'=' -f2)
 # Not necessary 
