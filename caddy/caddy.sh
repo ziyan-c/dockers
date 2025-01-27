@@ -12,16 +12,17 @@
 INFO_PRIVATE="/var/lib/docker/volumes/caddy/info.private"
 
 # 1
-# Read server info from info.private
-TOP_LEVEL_DOMAIN=$(grep "^top_level_domain=" "$INFO_PRIVATE" | cut -d'=' -f2-)
-SERVER_DOMAIN=$(grep "^server_domain=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+# Read server info from info.private only when it does exist 
+if [[ -f $INFO_PRIVATE ]]; then 
+    TOP_LEVEL_DOMAIN=$(grep "^top_level_domain=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+    SERVER_DOMAIN=$(grep "^server_domain=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
-SERVER_CERT=$(grep "^server_cert=" "$INFO_PRIVATE" | cut -d'=' -f2-)
-SERVER_KEY=$(grep "^server_key=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+    SERVER_CERT=$(grep "^server_cert=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+    SERVER_KEY=$(grep "^server_key=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
-REVERSE_PROXY_IP=$(grep "^reverse_proxy_ip=" "$INFO_PRIVATE" | cut -d'=' -f2-)
-REVERSE_PROXY_PORT=$(grep "^reverse_proxy_port=" "$INFO_PRIVATE" | cut -d'=' -f2-)
-
+    REVERSE_PROXY_IP=$(grep "^reverse_proxy_ip=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+    REVERSE_PROXY_PORT=$(grep "^reverse_proxy_port=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+fi 
 
 # 2
 # Caddyfile not provided 
