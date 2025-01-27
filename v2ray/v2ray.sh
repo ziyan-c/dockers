@@ -6,11 +6,6 @@ CONFIG_JSON_PATH=/var/lib/docker/volumes/v2ray/etc/v2ray/config.json
 LOG_FILE_PATH=/var/lib/docker/volumes/v2ray/var/log
 
 
-if [[ -f $INFO_PRIVATE ]]; then 
-    echo "Error: $INFO_PRIVATE does not exist"
-    exit 1
-fi
-
 # Ensure info.private exists
 if [[ ! -f $INFO_PRIVATE ]]; then
     echo "Error: $INFO_PRIVATE not found."
