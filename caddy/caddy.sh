@@ -20,52 +20,55 @@ REVERSE_PROXY_IP=$(grep "^reverse_proxy_ip=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 REVERSE_PROXY_PORT=$(grep "^reverse_proxy_port=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
 
-# 2
-# Initialize the Caddyfile
-cat > /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
-# Global Option Block
-{
-    # Disable automatic certificate management
-    auto_https disable_certs
+# Caddyfile not provided 
+if [[ ! -f /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile ]]; then 
+    # 2
+    # Initialize the Caddyfile
+    cat > /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
+    # Global Option Block
+    {
+        # Disable automatic certificate management
+        auto_https disable_certs
 
-    # Disable logging
-    log {
-        output discard
+        # Disable logging
+        log {
+            output discard
+        }
     }
-}
-EOF
+    EOF
 
-# Add the server-specific Caddyfile configuration
-cat >> /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
-$SERVER_DOMAIN {
-    # Set custom ssl certificates
-    tls $SERVER_CERT $SERVER_KEY
+    # Add the server-specific Caddyfile configuration
+    cat >> /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
+    $SERVER_DOMAIN {
+        # Set custom ssl certificates
+        tls $SERVER_CERT $SERVER_KEY
 
-    # Set this path to your site's directory.
-    root * /usr/share/caddy
+        # Set this path to your site's directory.
+        root * /usr/share/caddy
 
-    # Enable the static file server.
-    file_server
+        # Enable the static file server.
+        file_server
 
-    # Named matcher for websockets
-    @websockets {
-        path /v2ray/*
-        header Connection Upgrade
-        header Upgrade websocket
+        # Named matcher for websockets
+        @websockets {
+            path /v2ray/*
+            header Connection Upgrade
+            header Upgrade websocket
+        }
+        @not-websockets {
+            not path /v2ray/*
+        }
+        # Another common task is to set up a reverse proxy:
+        reverse_proxy @websockets $REVERSE_PROXY_IP:$REVERSE_PROXY_PORT {
+            # Restore Client Original IP
+            header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+        }
+
+        # Redirect /*
+        redir @not-websockets https://$TOP_LEVEL_DOMAIN permanent
     }
-    @not-websockets {
-        not path /v2ray/*
-    }
-    # Another common task is to set up a reverse proxy:
-    reverse_proxy @websockets $REVERSE_PROXY_IP:$REVERSE_PROXY_PORT {
-        # Restore Client Original IP
-        header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
-    }
-
-    # Redirect /*
-    redir @not-websockets https://$TOP_LEVEL_DOMAIN permanent
-}
-EOF
+    EOF
+fi
 
 
 # 3
