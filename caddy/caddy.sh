@@ -27,6 +27,14 @@ SERVER_KEY=$(grep "^server_key=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 REVERSE_PROXY_IP=$(grep "^reverse_proxy_ip=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 REVERSE_PROXY_PORT=$(grep "^reverse_proxy_port=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
+if [[ ! -f /etc/ssl/$SERVER_DOMAIN/cf.pem ]]; then 
+    echo "Error: ssl certificate does not exist"
+    exit 1
+fi 
+if [[ ! -f /etc/ssl/$SERVER_DOMAIN/cf.key ]]; then 
+    echo "Error: ssl certificate does not exist"
+    exit 1
+fi 
 
 # 2
 # Caddyfile not provided 
