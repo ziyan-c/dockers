@@ -2,7 +2,10 @@
 
 # JOBS 
 # 1. Read from info.private 
-# 2. Write to Caddyfile 
+# 2. if Caffyfile not provided
+#   generate according to info.private 
+# else 
+#   use the provided Caddyfile directly 
 # 3. Build and run docker 
 
 
@@ -20,9 +23,9 @@ REVERSE_PROXY_IP=$(grep "^reverse_proxy_ip=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 REVERSE_PROXY_PORT=$(grep "^reverse_proxy_port=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
 
+# 2
 # Caddyfile not provided 
 if [[ ! -f /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile ]]; then 
-    # 2
     # Initialize the Caddyfile
     cat > /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile <<EOF
     # Global Option Block
@@ -67,7 +70,7 @@ if [[ ! -f /var/lib/docker/volumes/caddy/etc/caddy/Caddyfile ]]; then
         # Redirect /*
         redir @not-websockets https://$TOP_LEVEL_DOMAIN permanent
     }
-    EOF
+EOF
 fi
 
 
