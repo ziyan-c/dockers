@@ -69,8 +69,7 @@ if [[ $INITIALIZATION_REQUIRED == 1 ]]; then
     # Configure root user privileges
     echo "Granting all privileges to root@%..."
 
-    docker exec mariadb \
-    mkdir /run/mysqld && \
+    docker exec mariadb -it \
     mariadb -u root <<EOF
     ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
     RENAME USER 'root'@'localhost' TO 'root'@'%';
