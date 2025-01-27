@@ -12,6 +12,6 @@ EXPOSE 3306
 
 # Entrypoint for certbot 
 CMD ["bash", "-c", \
-    mkdir /run/mysqld && \
-    "mariadbd --user=root --console && \
+    "mkdir /run/mysqld && \
+    mariadbd --user=root --console && \
     sleep infinty"]
