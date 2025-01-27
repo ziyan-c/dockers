@@ -3,6 +3,8 @@
 # Path to the MariaDB data directory
 DATA_DIR="/var/lib/docker/volumes/mariadb/var/lib/mysql"
 
+docker build -t ziyan1c/mariadb .
+
 # Check if the data directory exists
 if [ ! -d "$DATA_DIR" ]; then
     echo "Data directory does not exist. Preparing to initialize MariaDB..."
