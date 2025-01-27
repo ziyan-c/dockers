@@ -84,7 +84,8 @@ docker run -d -it \
     -v /var/lib/docker/volumes/caddy/etc/ssl:/etc/ssl \
     -v /var/lib/docker/volumes/caddy/usr/share/caddy:/usr/share/caddy \
     -p 80:80 -p 443:443 \
-    --ip 172.17.0.100 \
+    --network v2ray_network \
+    --ip 192.168.10.10 \
     --restart always \
     --name caddy \
     ziyan1c/caddy 

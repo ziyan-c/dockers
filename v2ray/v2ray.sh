@@ -189,6 +189,7 @@ docker run -d -it \
     -v ${LOG_FILE_PATH}:/var/log/v2ray \
     -p ${VMESS_PORT}:${VMESS_PORT} \
     --restart always \
-    --ip 172.17.0.101 \
+    --network v2ray_network \
+    --ip 192.168.10.11 \
     --name v2ray \
     ziyan1c/v2ray

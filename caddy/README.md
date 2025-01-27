@@ -1,5 +1,14 @@
 # caddy 
 
+## Prerequisites
+Create new docker network 
+```text
+docker network create \
+    --driver bridge \
+    --subnet 192.168.10.0/24 \
+    v2ray_network 
+```
+
 ## Dockerfile 
 build from Alpine 
 
