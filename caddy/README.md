@@ -8,6 +8,8 @@ JOBS
 1. Read from info.private 
 2. Write to Caddyfile 
 3. Build and run docker 
+default ip address 172.17.0.100
+
 
 ## info.private
 ```text
