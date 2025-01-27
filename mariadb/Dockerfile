@@ -6,10 +6,10 @@ RUN apk add --no-cache bash  vim
 RUN apk add --no-cache mariadb mariadb-client
 
 
-WORKDIR /etc/caddy 
+WORKDIR /etc/my.cnf.d
 
 EXPOSE 3306
 
 # Entrypoint for certbot 
-ENTRYPOINT ["bash", "-c"]
-CMD ["caddy start && sleep infinty"]
+CMD ["bash", "-c", \
+    "mariadbd --user=mysql --console && sleep infinty"]
