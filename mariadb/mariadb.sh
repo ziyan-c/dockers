@@ -37,6 +37,9 @@ ssl=on       # Enable SSL for secure connections
 ssl_cert=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/fullchain.pem 
 ssl_key=/etc/letsencrypt/live/$TOP_LEVEL_DOMAIN_NAME/privkey.pem 
 
+# Enforce SSL
+require_secure_transport=on
+
 EOF
 
     # Generate a random root password
