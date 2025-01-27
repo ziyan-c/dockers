@@ -69,6 +69,9 @@ if [[ $INITIALIZATION_REQUIRED == 1 ]]; then
     # Configure root user privileges
     echo "Granting all privileges to root@%..."
 
+    echo "Waiting for the container to run..."
+    sleep 10
+
     docker exec -i mariadb \
     mariadb -u root <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
