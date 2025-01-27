@@ -5,13 +5,15 @@ RUN apk update
 RUN apk add --no-cache bash  vim 
 RUN apk add --no-cache mariadb mariadb-client
 
+# Stupid Alpine error 
+RUN mkdir /run/mysqld
+
 
 WORKDIR /etc/my.cnf.d
 
 EXPOSE 3306
 
-# Entrypoint for certbot 
+
 CMD ["bash", "-c", \
-    "mkdir /run/mysqld && \
-    mariadbd --user=root --console && \
+    "mariadbd --user=root --console && \
     sleep infinty"]
