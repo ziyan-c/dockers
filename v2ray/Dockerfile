@@ -13,5 +13,7 @@ WORKDIR /etc/v2ray
 
 
 CMD ["bash", "-c", \
-    "v2ray run && \
+    "v2ray run \
+    -config /etc/v2ray/config.json \
+    -config /etc/v2ray/users.json && \
     sleep infinty"]
