@@ -37,7 +37,7 @@ EOF
         -v /var/lib/docker/volumes/certbot/etc/letsencrypt:/etc/letsencrypt \
         -v $DATA_DIR:/var/lib/mysql \
         ziyan1c/mariadb \
-        mariadb-install-db --user=mysql --datadir=/var/lib/mysql
+        mariadb-install-db --user=root --datadir=/var/lib/mysql
 
     echo "MariaDB data directory initialized."
 

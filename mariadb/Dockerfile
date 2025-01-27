@@ -12,4 +12,4 @@ EXPOSE 3306
 
 # Entrypoint for certbot 
 CMD ["bash", "-c", \
-    "mariadbd --user=mysql --console && sleep infinty"]
+    "mariadbd --user=root --console && sleep infinty"]
