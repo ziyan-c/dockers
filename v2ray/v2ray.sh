@@ -201,7 +201,7 @@ docker run -d -it \
 
 # Set up log rotation
 cat > /etc/logrotate.d/v2ray <<EOF
-$LOG_FILE_PATH/*.log {
+$LOG_FILE_PATH/v2ray/*.log {
     daily
     rotate 7
     compress

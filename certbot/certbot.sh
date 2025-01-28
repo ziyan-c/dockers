@@ -67,7 +67,7 @@ fi
 
 # Limit logs 
 cat > /etc/logrotate.d/certbot-renew <<EOF
-/var/lib/docker/volumes/certbot/var/log/*.log {
+/var/lib/docker/volumes/certbot/var/log/certbot-renew.log {
     daily
     rotate 7
     compress
