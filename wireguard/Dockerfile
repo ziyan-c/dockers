@@ -13,5 +13,5 @@ RUN apk add --no-cache wireguard-tools  wireguard-tools-wg-quick
 WORKDIR /etc/wireguard 
 
 # Entrypoint for wireguard  
-ENTRYPOINT ["bash", "-c"]
-CMD ["wg-quick up wg0 && sleep infinity"]
+CMD ["bash", "-c", \
+    "wg-quick up wg0 && sleep infinity"]

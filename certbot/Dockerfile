@@ -11,5 +11,5 @@ WORKDIR /etc/certbot
 
 
 # Entrypoint for certbot 
-ENTRYPOINT ["certbot"]
+CMD ["certbot"]
 

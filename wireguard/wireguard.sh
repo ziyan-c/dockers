@@ -1,37 +1,31 @@
 #!/bin/sh
 
-## JOBS 
+## JOBS
 # 1. Check if $INFO_PRIVATE exists
 # if exists 
 #   use the info 
 # else 
 #   create info for PC, Phone and tablet itself 
-# 2. Create wireguard configuration file 
+# 2. Create WireGuard configuration file 
 # 3. Build docker ziyan1c/wireguard 
 # 4. Run docker wireguard 
 
-
 # Define variables
-WIREGUARD_DIR="/var/lib/docker/volumes/wireguard"
-INFO_PRIVATE="$WIREGUARD_DIR/info.private"
-# INFO_PRIVATE should contain:
-# private_key=...
-# pc_public_key=...
-# pc_allowed_ips=...
-# phone_public_key=...
-# phone_allowed_ips=...
+INFO_PRIVATE="/var/lib/docker/volumes/wireguard/info.private"
+WIREGUARD_DIR="/var/lib/docker/volumes/wireguard/etc/wireguard"
+CONFIG_FILE="$WIREGUARD_DIR/wg0.conf"
 DOCKER_INTERFACE="eth0"
 WIREGUARD_INTERFACE="wg0"
-CONFIG_FILE="$WIREGUARD_DIR/$WIREGUARD_INTERFACE.conf"
+DOCKER_IMAGE="ziyan1c/wireguard"
+CONTAINER_NAME="wireguard"
 
 LISTEN_PORT=65530
 ADDRESS_IPV4="10.0.1.1/24"
 ADDRESS_IPV6="fc00::1:1/112"
 
-# 1
-# Check if the $INFO_PRIVATE file exists
+# 1. Check if the $INFO_PRIVATE file exists
 if [ -f "$INFO_PRIVATE" ]; then
-    echo "Using existing private key..."
+    echo "Using existing private key and client configurations..."
     chmod 600 "$INFO_PRIVATE"
     . "$INFO_PRIVATE" # Source the private key and client details
 else
@@ -71,39 +65,18 @@ EOF
     . "$INFO_PRIVATE" # Source the newly created file
 fi
 
+# 2. Create WireGuard configuration file only if it does not exist
+if [ -f "$CONFIG_FILE" ]; then
+    echo "$CONFIG_FILE already exists. Using existing configuration."
+else
+    echo "Creating WireGuard configuration file..."
+    mkdir -p "$WIREGUARD_DIR"
 
-# 2 
-# Create WireGuard configuration file
-cat > "$CONFIG_FILE" <<EOF
+    cat > "$CONFIG_FILE" <<EOF
 [Interface]
 PrivateKey = $private_key
 Address = $ADDRESS_IPV4, $ADDRESS_IPV6
 ListenPort = $LISTEN_PORT
-
-# firewalld is not working on Alpine 
-# # firewalld 
-# PostUp = firewall-cmd --permanent --add-port=65530/udp && \
-#     firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address=10.0.1.0/24 masquerade' && \
-#     firewall-cmd --permanent --add-rich-rule='rule family=ipv6 source address=fc00::1:0/112 masquerade' && \
-#     firewall-cmd --reload 
-# PostDown = firewall-cmd --permanent --remove-port=65530/udp && \
-#     firewall-cmd --permanent --remove-rich-rule='rule family=ipv4 source address=10.0.1.0/24 masquerade' && \
-#     firewall-cmd --permanent --remove-rich-rule='rule family=ipv6 source address=fc00::1:0/112 masquerade' && \
-#     firewall-cmd --reload
-
-# # ufw with iptables 
-# PostUp = ufw allow $LISTEN_PORT/udp && \
-#     ufw reload \
-#     ufw route allow in on $WIREGUARD_INTERFACE out on $DOCKER_INTERFACE && \
-#     ufw route allow in on $DOCKER_INTERFACE out on $WIREGUARD_INTERFACE \
-#     iptables -t nat -A POSTROUTING -s $ADDRESS_IPV4 -o $DOCKER_INTERFACE -j MASQUERADE \
-#     ip6tables -t nat -A POSTROUTING -s $ADDRESS_IPV6 -o $DOCKER_INTERFACE -j MASQUERADE
-# PostDown = ufw delete allow $LISTEN_PORT/udp && \
-#     ufw reload \
-#     ufw route delete allow in on $WIREGUARD_INTERFACE out on $DOCKER_INTERFACE && \
-#     ufw route delete allow in on $DOCKER_INTERFACE out on $WIREGUARD_INTERFACE \
-#     iptables -t nat -D POSTROUTING -s $ADDRESS_IPV4 -o $DOCKER_INTERFACE -j MASQUERADE \
-#     ip6tables -t nat -D POSTROUTING -s $ADDRESS_IPV6 -o $DOCKER_INTERFACE -j MASQUERADE
 
 # pure iptables 
 PostUp = iptables -I INPUT -p udp --dport $LISTEN_PORT -j ACCEPT && \
@@ -119,67 +92,34 @@ PostDown = iptables -D INPUT -p udp --dport $LISTEN_PORT -j ACCEPT && \
 
 EOF
 
+    echo "# Client configurations" >> "$CONFIG_FILE"
+    while read -r line; do
+        if [[ $line == *_private_key=* ]]; then
+            CLIENT=$(echo "$line" | cut -d'_' -f1)
+            PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$INFO_PRIVATE" | cut -d'=' -f2-)
+            ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$INFO_PRIVATE" | cut -d'=' -f2-)
 
-# # Client configurations
-# # PC configuration
-# [Peer]
-# PublicKey = $pc_public_key
-# AllowedIPs = $pc_allowed_ips
+            echo "# $CLIENT" >> "$CONFIG_FILE"
+            echo "[Peer]" >> "$CONFIG_FILE"
+            echo "PublicKey = $PUBLIC_KEY" >> "$CONFIG_FILE"
+            echo "AllowedIPs = $ALLOWED_IPS" >> "$CONFIG_FILE"
+            echo >> "$CONFIG_FILE"
+        fi
+    done < "$INFO_PRIVATE"
 
-# # Phone configuration
-# [Peer]
-# PublicKey = $phone_public_key
-# AllowedIPs = $phone_allowed_ips
+    chmod 600 "$CONFIG_FILE"
+    echo "WireGuard configuration file created."
+fi
 
-# # Tablet configuration
-# [Peer]
-# PublicKey = $tablet_public_key
-# AllowedIPs = $tablet_allowed_ips
-# EOF
+# 3. Build Docker image
+echo "Building Docker image..."
+docker build -t "$DOCKER_IMAGE" .
 
+# 4. Run WireGuard container
 
-
-echo "# Client configurations" >> $CONFIG_FILE
-# Add client configurations 
-# Process each client (phone, tablet, pc, etc.)
-while read -r line; do
-  if [[ $line == *_private_key=* ]]; then
-    CLIENT=$(echo "$line" | cut -d'_' -f1)
-    PRIVATE_KEY=$(echo "$line" | cut -d'=' -f2-)
-    PUBLIC_KEY=$(grep "^${CLIENT}_public_key=" "$INFO_PRIVATE" | cut -d'=' -f2-)
-    ALLOWED_IPS=$(grep "^${CLIENT}_allowed_ips=" "$INFO_PRIVATE" | cut -d'=' -f2)
-    
-    # Add the client configuration
-    echo "# $CLIENT" >> $CONFIG_FILE
-    echo "[Peer]" >> $CONFIG_FILE
-    echo "PublicKey = $PUBLIC_KEY" >> $CONFIG_FILE
-    echo "AllowedIPs = $ALLOWED_IPS" >> $CONFIG_FILE
-    echo >> $CONFIG_FILE
-  fi
-done < "$INFO_PRIVATE"
-
-
-
-
-
-chmod 600 "$CONFIG_FILE"
-
-# Display the status
-echo "WireGuard configuration completed."
-
-
-# 3
-# build docker ziyan1c/wireguard 
-docker build -t ziyan1c/wireguard .
-
-
-# 4.
-# Run docker wireguard 
-DOCKER_IMAGE="ziyan1c/wireguard"
-CONTAINER_NAME="wireguard"
-
+echo "Starting new WireGuard container..."
 docker run -d -it \
-    --name $CONTAINER_NAME \
+    --name "$CONTAINER_NAME" \
     --cap-add=NET_ADMIN \
     --cap-add=SYS_MODULE \
     --sysctl net.ipv4.conf.all.src_valid_mark=1 \
@@ -187,6 +127,9 @@ docker run -d -it \
     --sysctl net.ipv6.conf.all.forwarding=1 \
     -v "$WIREGUARD_DIR:/etc/wireguard" \
     -v "$CONFIG_FILE:/etc/wireguard/$WIREGUARD_INTERFACE.conf" \
-    -p "$LISTEN_PORT":"$LISTEN_PORT"/udp \
+    -p "$LISTEN_PORT:$LISTEN_PORT/udp" \
     --restart always \
     "$DOCKER_IMAGE"
+
+
+echo "WireGuard setup completed successfully."

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Prerequisites:
 # We have volume certbot/info.private prepared 
@@ -17,12 +17,8 @@ if [[ ! -f $INFO_FILE ]]; then
 fi 
 chmod 600 $INFO_FILE
 
-#CLOUDFLARE_API_TOKEN=$(grep 'dns_cloudflare_api_token' "$INFO_FILE" | cut -d'=' -f2)
-# Not necessary 
-# It will get obtained automatically by certbot through the file info.private 
-
-DOMAINS=$(grep 'domains' "$INFO_FILE" | cut -d'=' -f2)
-EMAIL=$(grep 'email' "$INFO_FILE" | cut -d'=' -f2)
+DOMAINS=$(grep '^domains=' "$INFO_FILE" | cut -d'=' -f2-)
+EMAIL=$(grep '^email=' "$INFO_FILE" | cut -d'=' -f2-)
 
 # Format domains into multiple -d options 
 DOMAIN_ARGS=""
@@ -31,32 +27,57 @@ for domain in $(echo $DOMAINS | tr ',' ' '); do
 done 
 
 
-## JOBS
-
-# 1
-# Build dodkcer image 
+# 1. Build Docker image
 docker build -t ziyan1c/certbot .
 
-
-# 2
-# Run docker certbot 
+# 2. Run Docker certbot 
 docker run --rm \
     -v /var/lib/docker/volumes/certbot/etc/letsencrypt:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
-    ziyan1c/certbot certonly \
+    ziyan1c/certbot certbot certonly \
     --dns-cloudflare \
     --dns-cloudflare-credentials /etc/letsencrypt/info.private \
     $DOMAIN_ARGS \
     --email $EMAIL \
-    --non-interactive --agree-tos 
+    --non-interactive --agree-tos
 
-# 3
-# Create a cron job to renew certificate daily at 8 AM
+# 3. Create a cron job to renew certificate daily at 8 AM
+LOG_DIR="/var/lib/docker/volumes/certbot/var/log"
+LOG_FILE="$LOG_DIR/certbot-renew.log"
+
+# Ensure the log directory exists
+mkdir -p "$LOG_DIR"
+touch "$LOG_FILE"
+
 JOB="/usr/bin/docker run --rm \
     -v /var/lib/docker/volumes/certbot/etc/letsencrypt:/etc/letsencrypt \
     -v /var/lib/docker/volumes/certbot/info.private:/etc/letsencrypt/info.private \
-    ziyan1c/certbot renew \
+    -v $LOG_DIR:/var/log \
+    ziyan1c/certbot certbot renew \
     --dns-cloudflare \
-    --dns-cloudflare-credentials /etc/letsencrypt/info.private"
+    --dns-cloudflare-credentials /etc/letsencrypt/info.private >> /var/log/certbot-renew.log 2>&1"
 CRON_JOB="0 8 * * *    $JOB"
-(crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+
+if ! (crontab -l 2>/dev/null | grep -q "$JOB"); then
+    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+    echo "Cron job added successfully"
+else
+    echo "Cron job already exists, skipping"
+fi
+
+# Limit logs 
+cat > /etc/logrotate.d/certbot-renew <<EOF
+/var/lib/docker/volumes/certbot/var/log/*.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
+EOF
+
+logrotate -v —force /etc/logrotate.d/v2ray
+
+echo "Certbot setup completed. Logs are rotated daily with 7 backups."
