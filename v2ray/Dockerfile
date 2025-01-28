@@ -11,7 +11,7 @@ RUN rm -rf /etc/v2ray/*
 
 # Create v2ray log files 
 RUN mkdir -p /var/log/v2ray 
-RUN touch /var/log/access.log
+RUN touch /var/log/v2ray/access.log
 RUN touch /var/log/v2ray/error.log
 
 WORKDIR /etc/v2ray
