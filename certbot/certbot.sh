@@ -78,6 +78,6 @@ cat > /etc/logrotate.d/certbot-renew <<EOF
 }
 EOF
 
-logrotate -v —force /etc/logrotate.d/v2ray
+logrotate -v —force /etc/logrotate.d/certbot-renew
 
 echo "Certbot setup completed. Logs are rotated daily with 7 backups."
