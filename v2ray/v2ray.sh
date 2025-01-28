@@ -194,6 +194,11 @@ docker run -d -it \
     --name v2ray \
     ziyan1c/v2ray
 
+
+# wait to run 
+sleep 10
+echo "Waiting v2ray container to run"
+
 # Set up log rotation
 cat > /etc/logrotate.d/v2ray <<EOF
 $LOG_FILE_PATH/*.log {
