@@ -186,7 +186,7 @@ docker build -t ziyan1c/v2ray .
 docker run -d -it \
     -v "$USERS_JSON_PATH:/etc/v2ray/users.json" \
     -v "$CONFIG_JSON_PATH:/etc/v2ray/config.json" \
-    -v "$LOG_FILE_PATH:/var/log" \
+    -v "$LOG_FILE_PATH/v2ray:/var/log/v2ray" \
     -p "$VMESS_PORT:$VMESS_PORT" \
     --restart always \
     --network v2ray_network \
@@ -195,9 +195,9 @@ docker run -d -it \
     ziyan1c/v2ray
 
 
-# wait to run 
-sleep 10
-echo "Waiting v2ray container to run"
+# # wait to run 
+# echo "Waiting v2ray container to run"
+# sleep 10
 
 # Set up log rotation
 cat > /etc/logrotate.d/v2ray <<EOF
