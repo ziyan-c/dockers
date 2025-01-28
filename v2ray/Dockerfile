@@ -8,6 +8,7 @@ RUN apk add --no-cache v2ray
 # Delete exsiting rules 
 # Might be a backdoor
 RUN rm -rf /etc/v2ray/*
+RUN mkdir -p /var/log/v2ray 
 
 WORKDIR /etc/v2ray
 
