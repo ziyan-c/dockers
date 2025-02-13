@@ -188,7 +188,6 @@ docker run -d -it \
     -v "$CONFIG_JSON_PATH:/etc/v2ray/config.json" \
     -v "$LOG_FILE_PATH/v2ray:/var/log/v2ray" \
     -p "$VMESS_PORT:$VMESS_PORT" \
-    -p "$API_PORT:$API_PORT" \
     --restart always \
     --network v2ray_network \
     --ip 192.168.10.11 \
